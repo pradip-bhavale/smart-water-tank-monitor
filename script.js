@@ -94,10 +94,10 @@ function fetchLatestValue() {
         if (latestLevel < 25) {
           statusText = "Low";
           bgColor = "var(--low)";
-        } else if (latestLevel < 50) {
+        } else if (latestLevel < 60) {
           statusText = "Medium";
           bgColor = "var(--medium)";
-        } else if (latestLevel < 80) {
+        } else if (latestLevel < 85) {
           statusText = "High";
           bgColor = "var(--high)";
         } else {
