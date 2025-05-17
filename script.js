@@ -14,7 +14,7 @@ const waterLevelChart = new Chart(ctx, {
   data: {
     labels: timestamps,
     datasets: [{
-      label: 'Water Level (CM)',
+      label: 'Water Level (%)',
       data: waterLevels,
       borderColor: '#2196f3',
       backgroundColor: 'rgba(33, 150, 243, 0.2)',
@@ -42,7 +42,7 @@ const waterLevelChart = new Chart(ctx, {
         max: 100,
         title: {
           display: true,
-          text: 'Water Level (CM)',
+          text: 'Water Level (%)',
         }
       }
     },
@@ -86,9 +86,10 @@ function fetchLatestValue() {
     .then(response => response.json())
     .then(data => {
       const latestLevel = parseFloat(data.field1);
+      const latestTime = new Date(data.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
       if (!isNaN(latestLevel)) {
-        waterLevelEl.textContent = `${latestLevel.toFixed(1)} cm`;
+        waterLevelEl.textContent = `${latestLevel.toFixed(1)} %`;
 
         let statusText = "", bgColor = "";
         if (latestLevel < 25) {
@@ -107,6 +108,19 @@ function fetchLatestValue() {
 
         tankStatusEl.textContent = statusText;
         infoCard.style.backgroundColor = bgColor;
+
+        // Update chart with the latest value
+        if (timestamps[timestamps.length - 1] !== latestTime) {
+          waterLevels.push(latestLevel);
+          timestamps.push(latestTime);
+
+          if (waterLevels.length > 10) {
+            waterLevels.shift();
+            timestamps.shift();
+          }
+
+          waterLevelChart.update();
+        }
       }
     })
     .catch(error => {
